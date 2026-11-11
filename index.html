@@ -18,12 +18,14 @@
   --ink-dim:#8d86b2;
   --ink-faint:#5a537e;
   --line:rgba(157,140,255,.14);
-  --c-patient:#9d8cff;
-  --c-care:#f27bb4;
+  --c-health:#9d8cff;
   --c-service:#62a8f5;
+  --c-exp:#f27bb4;
+  --c-agent:#c792ea;
   --c-integ:#5fd4b2;
   --c-code:#f0b35f;
-  --c-devops:#8fa3c8;
+  --c-ext:#8fa3c8;
+  --c-data:#f0935f;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -54,9 +56,9 @@ nav .links a{
   transition:color .18s;
 }
 nav .links a:hover,nav .links a:focus-visible{color:#fff}
-a:focus-visible,button:focus-visible{outline:2px solid var(--c-patient);outline-offset:3px;border-radius:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--c-health);outline-offset:3px;border-radius:3px}
 
-/* ---------- hero / map ---------- */
+/* ---------- hero / architecture ---------- */
 #map-section{
   position:relative;height:100vh;min-height:640px;
   background:radial-gradient(ellipse at 62% 38%, var(--bg-2) 0%, var(--bg-0) 68%);
@@ -69,6 +71,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--c-patient);outline-
 
 #map{position:absolute;inset:0;width:100%;height:100%;cursor:grab}
 #map:active{cursor:grabbing}
+#map text{font-family:'Sora',sans-serif}
 
 .map-intro{
   position:absolute;left:34px;bottom:38px;z-index:10;max-width:400px;
@@ -79,12 +82,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--c-patient);outline-
   letter-spacing:-.015em;margin-bottom:12px;color:#fff;
 }
 .map-intro p{font-size:13.5px;font-weight:300;color:var(--ink-dim);line-height:1.65}
-.map-intro .hint{
-  margin-top:16px;font-size:11.5px;color:var(--ink-faint);
-}
-.map-intro .disclaimer{
-  margin-top:10px;font-size:10.5px;color:var(--ink-faint);opacity:.85;
-}
+.map-intro .hint{margin-top:16px;font-size:11.5px;color:var(--ink-faint)}
+.map-intro .disclaimer{margin-top:10px;font-size:10.5px;color:var(--ink-faint);opacity:.85}
 
 .legend{
   position:absolute;right:30px;bottom:34px;z-index:10;
@@ -93,19 +92,14 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--c-patient);outline-
 .legend div{display:flex;align-items:center;gap:9px;font-size:11px;color:var(--ink-dim);font-weight:300}
 .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
 
-/* map svg pieces */
-.spoke{fill:none;stroke-opacity:.35}
-.crosslink{fill:none;stroke:rgba(157,140,255,.28);stroke-dasharray:3 5;stroke-width:1}
-.node{cursor:pointer}
-.node circle.core{transition:opacity .25s}
-.node circle.halo{opacity:0;transition:opacity .25s}
-.node:hover circle.halo,.node.sel circle.halo{opacity:.28}
-.node text{
-  font-family:'Sora',sans-serif;fill:var(--ink);
-  pointer-events:none;transition:opacity .25s;
-}
-.node.hub text{font-weight:600}
-.dimmed{opacity:.13;transition:opacity .3s}
+/* architecture nodes & edges */
+.archnode{cursor:pointer}
+.archnode rect.body{transition:stroke-width .2s,fill-opacity .2s}
+.archnode:hover rect.body,.archnode.sel rect.body{stroke-width:2.2}
+.archnode.sel rect.body{filter:drop-shadow(0 0 14px rgba(157,140,255,.35))}
+.aedge path{fill:none;transition:opacity .3s}
+.aedge text{fill:var(--ink-faint);font-size:10.5px;font-style:italic}
+.dimmed{opacity:.12;transition:opacity .3s}
 .lit{opacity:1;transition:opacity .3s}
 
 /* detail panel */
@@ -132,9 +126,7 @@ aside#panel .desc{font-size:13px;font-weight:300;line-height:1.7;color:var(--ink
 aside#panel .block{margin-top:22px;padding-top:18px;border-top:1px solid rgba(157,140,255,.12)}
 aside#panel .block h3{font-size:11px;color:var(--ink-faint);font-weight:500;margin-bottom:8px}
 aside#panel .block p{font-size:12.5px;font-weight:300;line-height:1.68;color:var(--ink-dim)}
-aside#panel .block.talk p{
-  color:var(--ink);border-left:2px solid rgba(157,140,255,.45);padding-left:13px;
-}
+aside#panel .block.talk p{color:var(--ink);border-left:2px solid rgba(157,140,255,.45);padding-left:13px}
 
 /* ---------- shared section shell ---------- */
 section.shell{padding:110px 34px;max-width:1120px;margin:0 auto}
@@ -152,9 +144,7 @@ h2.sec{
   padding:46px 0;border-top:1px solid var(--line);
 }
 .project:last-child{border-bottom:1px solid var(--line)}
-.project .meta .mark{
-  width:34px;height:4px;border-radius:2px;margin-bottom:16px;
-}
+.project .meta .mark{width:34px;height:4px;border-radius:2px;margin-bottom:16px}
 .project .meta h4{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:5px}
 .project .meta .where{font-size:12px;font-weight:300;color:var(--ink-dim);margin-bottom:3px}
 .project .meta .when{font-size:11.5px;font-weight:300;color:var(--ink-faint)}
@@ -166,9 +156,7 @@ h2.sec{
 .project h3{font-size:20px;font-weight:600;color:#fff;line-height:1.3;margin-bottom:16px;letter-spacing:-.01em}
 .project .body p{font-size:13.5px;font-weight:300;line-height:1.75;color:var(--ink);margin-bottom:14px}
 .project .body p strong{font-weight:500;color:#fff}
-.project .outcomes{
-  margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
-}
+.project .outcomes{margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .project .outcomes div{
   border:1px solid var(--line);border-radius:10px;padding:14px 16px;
   background:rgba(157,140,255,.045);
@@ -176,34 +164,21 @@ h2.sec{
 .project .outcomes b{display:block;font-size:17px;font-weight:600;color:#fff;margin-bottom:3px}
 .project .outcomes span{font-size:11px;font-weight:300;color:var(--ink-dim);line-height:1.45;display:block}
 
-/* integration diagram */
+/* project diagrams */
 .flow-diagram{
   margin:22px 0 6px;border:1px solid var(--line);border-radius:12px;
-  background:rgba(98,168,245,.05);padding:20px 16px 12px;
+  padding:20px 16px 12px;
 }
+.flow-diagram.t-health{background:rgba(157,140,255,.05)}
+.flow-diagram.t-sync{background:rgba(98,168,245,.05)}
+.flow-diagram.t-oms{background:rgba(240,179,95,.05)}
+.flow-diagram.t-fsc{background:rgba(242,123,180,.05)}
 .flow-diagram svg{width:100%;height:auto;display:block}
 .flow-diagram text{font-family:'Sora',sans-serif}
 .flow-caption{font-size:11px;color:var(--ink-faint);font-weight:300;text-align:center;margin-top:8px}
 
-/* ---------- experience ---------- */
-#experience .timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative}
-#experience .timeline::before{
-  content:"";position:absolute;left:0;right:0;top:7px;height:1px;
-  background:linear-gradient(90deg,var(--c-patient),var(--c-service),var(--c-integ));
-  opacity:.4;
-}
-.stop{padding:34px 26px 0 0;position:relative}
-.stop::before{
-  content:"";position:absolute;top:0;left:0;width:15px;height:15px;border-radius:50%;
-  background:var(--bg-0);border:2px solid var(--dot,#9d8cff);
-}
-.stop .years{font-size:11.5px;color:var(--ink-faint);font-weight:300;margin-bottom:6px}
-.stop h4{font-size:15.5px;font-weight:600;color:#fff;margin-bottom:3px}
-.stop .role{font-size:12.5px;color:var(--ink-dim);font-weight:300;margin-bottom:10px}
-.stop p{font-size:12.5px;font-weight:300;color:var(--ink-dim);line-height:1.7}
-
 /* ---------- certs ---------- */
-#certs .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+#certs .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px}
 #certs .cert{
   border:1px solid var(--line);border-radius:12px;padding:22px 20px;
   background:rgba(157,140,255,.04);
@@ -244,10 +219,6 @@ footer .built{margin-top:44px;font-size:11px;color:var(--ink-faint);opacity:.7}
   .legend{display:none}
   .project{grid-template-columns:1fr;gap:20px;padding:40px 0}
   .project .outcomes{grid-template-columns:1fr}
-  #experience .timeline{grid-template-columns:1fr;gap:8px}
-  #experience .timeline::before{display:none}
-  .stop{padding:0 0 26px 24px}
-  .stop::before{top:4px}
   #certs .grid{grid-template-columns:repeat(2,1fr)}
   aside#panel{
     top:auto;bottom:0;height:auto;max-height:64vh;width:100vw;border-left:0;
@@ -263,13 +234,7 @@ footer .built{margin-top:44px;font-size:11px;color:var(--ink-faint);opacity:.7}
 @media (prefers-reduced-motion:reduce){
   .star.tw{animation:none}
   aside#panel,html{transition:none;scroll-behavior:auto}
-  .float{animation:none !important}
 }
-@keyframes drift{
-  0%,100%{transform:translate(0,0)}
-  50%{transform:translate(var(--dx,2px),var(--dy,-3px))}
-}
-.float{animation:drift var(--dur,7s) ease-in-out infinite}
 </style>
 </head>
 <body>
@@ -277,23 +242,23 @@ footer .built{margin-top:44px;font-size:11px;color:var(--ink-faint);opacity:.7}
 <nav>
   <a class="brand" href="#map-section">Mike Gulberdi<span>Salesforce Developer</span></a>
   <div class="links">
-    <a href="#map-section">Org map</a>
+    <a href="#map-section">Architecture</a>
     <a href="#projects">Projects</a>
-    <a href="#experience">Experience</a>
+    <a href="#certs">Credentials</a>
     <a href="#contact">Contact</a>
   </div>
 </nav>
 
-<!-- ============ HERO: LIVE ORG MAP ============ -->
-<section id="map-section" aria-label="Interactive Salesforce org map">
+<!-- ============ HERO: LIVE ARCHITECTURE ============ -->
+<section id="map-section" aria-label="Live Salesforce platform architecture">
   <div id="stars"></div>
-  <svg id="map" role="img" aria-label="Interactive map of a Salesforce Health Cloud org"></svg>
+  <svg id="map" role="img" aria-label="Interactive architecture of a healthcare Salesforce platform with live data flows"></svg>
 
   <div class="map-intro">
-    <h1>I build Salesforce orgs<br>you can actually map.</h1>
-    <p>This is a living diagram of a Health Cloud org — its objects, automation, code, and integrations. Every node is something I've designed, built, or shipped.</p>
-    <div class="hint">Click a node to inspect it&ensp;·&ensp;drag to pan&ensp;·&ensp;scroll to zoom</div>
-    <div class="disclaimer">Representative architecture drawn from real engagements. No client data.</div>
+    <h1>I build Salesforce platforms<br>you can watch work.</h1>
+    <p>A living architecture for a healthcare platform — data flowing from source systems through an integration layer into the clouds, code, and AI agents that run on it.</p>
+    <div class="hint">Click any component to inspect it&ensp;·&ensp;drag to pan&ensp;·&ensp;scroll to zoom</div>
+    <div class="disclaimer">Representative architecture drawn from real engagements. No client systems or data.</div>
   </div>
 
   <div class="legend" id="legend"></div>
@@ -311,27 +276,94 @@ footer .built{margin-top:44px;font-size:11px;color:var(--ink-faint);opacity:.7}
 
 <!-- ============ PROJECTS ============ -->
 <section id="projects">
-  <div class="shell" style="max-width:1120px;margin:0 auto;padding:110px 34px">
+  <div style="max-width:1120px;margin:0 auto;padding:110px 34px">
     <div class="kicker">Selected work</div>
     <h2 class="sec">Four builds, end to end.</h2>
-    <p class="sec-sub">Each project below maps to a branch of the org above — from clinical data models to event-driven integration. Metrics reflect outcomes I contributed to as part of a delivery team.</p>
+    <p class="sec-sub">Each case study pairs the problem with the architecture that solved it — drawn the way I'd whiteboard it in a design review. Metrics reflect outcomes I contributed to as part of a delivery team.</p>
 
     <!-- Project 1 -->
     <article class="project">
       <div class="meta">
-        <div class="mark" style="background:var(--c-patient)"></div>
+        <div class="mark" style="background:var(--c-health)"></div>
         <h4>Patient 360 &amp; Agentforce</h4>
-        <div class="where">Mimit Health</div>
-        <div class="when">2024 — present</div>
+        <div class="where">Healthcare provider platform</div>
+        <div class="when">Most recent build</div>
         <div class="stack">
           <span>Health Cloud</span><span>Data Cloud</span><span>Agentforce</span>
-          <span>Apex</span><span>LWC</span><span>FHIR</span>
+          <span>Apex</span><span>LWC</span><span>FHIR</span><span>MuleSoft</span>
         </div>
       </div>
       <div class="body">
         <h3>One patient, one record — with an AI agent that actually knows them.</h3>
         <p><strong>The problem.</strong> Patient data lived in the EHR, the billing system, and a patchwork of engagement tools. Care coordinators toggled between five screens to answer one phone call, and no system could see the whole patient.</p>
-        <p><strong>The build.</strong> I implemented Health Cloud person accounts as the single patient record, with Data Cloud identity resolution stitching EHR, billing, and engagement identities into one unified profile. Clinical encounters flow in through a FHIR-based intake layer. On top of that foundation, an Agentforce service agent handles routine patient questions — appointment lookups, care-plan status, coverage checks — grounded in the patient's actual record and a curated knowledge base, with clean escalation to a human coordinator.</p>
+        <p><strong>The build.</strong> I implemented Health Cloud person accounts as the single patient record, with Data Cloud identity resolution stitching EHR, billing, and engagement identities into one unified profile. Clinical, lab, pharmacy, and telephony data flows through an API-led integration layer, and an Agentforce service agent handles routine patient questions — appointment lookups, care-plan status, coverage checks — grounded in the patient's actual record, with clean escalation to a human coordinator.</p>
+        <div class="flow-diagram t-health">
+          <svg viewBox="0 0 760 320" aria-label="Architecture diagram: source systems flowing through an integration layer into the Salesforce platform and Data Cloud">
+            <defs>
+              <marker id="h-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#9d8cff"/>
+              </marker>
+              <marker id="h-arrM" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#5fd4b2"/>
+              </marker>
+              <marker id="h-arrO" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#f0935f"/>
+              </marker>
+            </defs>
+            <!-- source systems -->
+            <g fill="rgba(143,163,200,.09)" stroke="#8fa3c8" stroke-opacity=".5">
+              <rect x="14" y="14" width="150" height="42" rx="9"/>
+              <rect x="14" y="70" width="150" height="42" rx="9"/>
+              <rect x="14" y="126" width="150" height="42" rx="9"/>
+              <rect x="14" y="182" width="150" height="42" rx="9"/>
+              <rect x="14" y="238" width="150" height="42" rx="9"/>
+            </g>
+            <g text-anchor="middle" fill="#d6cfef" font-size="11" font-weight="500">
+              <text x="89" y="33">EHR system</text><text x="89" y="89">Lab results</text>
+              <text x="89" y="145">Pharmacy</text><text x="89" y="201">Telephony / SMS</text>
+              <text x="89" y="257">Data warehouse</text>
+            </g>
+            <g text-anchor="middle" fill="#8d86b2" font-size="9">
+              <text x="89" y="47">FHIR R4 · HL7 v2</text><text x="89" y="103">results feed</text>
+              <text x="89" y="159">orders · fulfillment</text><text x="89" y="215">CTI · messaging</text>
+              <text x="89" y="271">analytics sync</text>
+            </g>
+            <!-- integration -->
+            <rect x="238" y="60" width="160" height="176" rx="11" fill="rgba(95,212,178,.09)" stroke="#5fd4b2" stroke-opacity=".6"/>
+            <text x="318" y="112" text-anchor="middle" fill="#ffffff" font-size="12.5" font-weight="600">Integration layer</text>
+            <text x="318" y="134" text-anchor="middle" fill="#8d86b2" font-size="9.5">API-led · canonical mapping</text>
+            <text x="318" y="150" text-anchor="middle" fill="#8d86b2" font-size="9.5">FHIR translation</text>
+            <text x="318" y="166" text-anchor="middle" fill="#8d86b2" font-size="9.5">retries · DLQ · replay</text>
+            <!-- platform -->
+            <rect x="470" y="14" width="276" height="182" rx="11" fill="rgba(157,140,255,.09)" stroke="#9d8cff" stroke-opacity=".6"/>
+            <text x="608" y="44" text-anchor="middle" fill="#ffffff" font-size="12.5" font-weight="600">Salesforce platform</text>
+            <text x="608" y="68" text-anchor="middle" fill="#d6cfef" font-size="10">Health Cloud — patient 360 · care plans</text>
+            <text x="608" y="88" text-anchor="middle" fill="#d6cfef" font-size="10">Service Cloud · Experience Cloud portal</text>
+            <text x="608" y="108" text-anchor="middle" fill="#d6cfef" font-size="10">Agentforce — patient &amp; coordinator agents</text>
+            <text x="608" y="134" text-anchor="middle" fill="#8d86b2" font-size="9.5">Apex trigger framework · LWC · Flows</text>
+            <text x="608" y="150" text-anchor="middle" fill="#8d86b2" font-size="9.5">invocable actions · named credentials</text>
+            <text x="608" y="174" text-anchor="middle" fill="#8d86b2" font-size="9.5">Shield encryption · consent-gated outreach</text>
+            <!-- data cloud -->
+            <rect x="470" y="232" width="276" height="74" rx="11" fill="rgba(240,147,95,.09)" stroke="#f0935f" stroke-opacity=".6"/>
+            <text x="608" y="261" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600">Data Cloud</text>
+            <text x="608" y="281" text-anchor="middle" fill="#8d86b2" font-size="9.5">identity resolution · unified profile</text>
+            <text x="608" y="296" text-anchor="middle" fill="#8d86b2" font-size="9.5">insights · grounding for Agentforce</text>
+            <!-- edges -->
+            <g stroke="#8fa3c8" stroke-width="1.3">
+              <path d="M168,35 C205,35 205,88 234,88" fill="none" marker-end="url(#h-arrM)"/>
+              <path d="M168,91 C200,91 204,118 234,118" fill="none" marker-end="url(#h-arrM)"/>
+              <path d="M168,147 C200,147 204,148 234,148" fill="none" marker-end="url(#h-arrM)" marker-start="url(#h-arrM)"/>
+              <path d="M168,203 C200,203 204,178 234,178" fill="none" marker-end="url(#h-arrM)" marker-start="url(#h-arrM)"/>
+              <path d="M168,259 C205,259 205,208 234,208" fill="none" marker-end="url(#h-arrM)" marker-start="url(#h-arrM)"/>
+            </g>
+            <path d="M402,110 C435,110 435,96 466,96" fill="none" stroke="#9d8cff" stroke-width="1.6" marker-end="url(#h-arr)" marker-start="url(#h-arr)"/>
+            <text x="434" y="88" text-anchor="middle" fill="#5a537e" font-size="9.5" font-style="italic">REST</text>
+            <path d="M402,196 C440,196 436,268 466,268" fill="none" stroke="#f0935f" stroke-width="1.6" marker-end="url(#h-arrO)"/>
+            <text x="428" y="248" text-anchor="middle" fill="#5a537e" font-size="9.5" font-style="italic">ingest</text>
+            <path d="M608,200 L608,228" stroke="#f0935f" stroke-width="1.6" marker-end="url(#h-arrO)" marker-start="url(#h-arrO)"/>
+          </svg>
+          <div class="flow-caption">Source systems → API-led integration → one platform, one patient profile, one grounded agent.</div>
+        </div>
         <div class="outcomes">
           <div><b>5 → 1</b><span>systems a coordinator opens to answer a patient call</span></div>
           <div><b>~40%</b><span>of routine inquiries deflected to the Agentforce agent</span></div>
@@ -345,8 +377,8 @@ footer .built{margin-top:44px;font-size:11px;color:var(--ink-faint);opacity:.7}
       <div class="meta">
         <div class="mark" style="background:var(--c-service)"></div>
         <h4>Real-time bidirectional sync</h4>
-        <div class="where">Integration architecture</div>
-        <div class="when">Fintech scenario</div>
+        <div class="where">Fintech engagement</div>
+        <div class="when">Integration architecture</div>
         <div class="stack">
           <span>Change Data Capture</span><span>Pub/Sub API</span><span>Kafka</span>
           <span>Platform Events</span><span>REST</span>
@@ -356,31 +388,27 @@ footer .built{margin-top:44px;font-size:11px;color:var(--ink-faint);opacity:.7}
         <h3>Two systems writing to the same records — without stepping on each other.</h3>
         <p><strong>The problem.</strong> A fintech company ran Salesforce alongside a homegrown internal platform. Both wrote to CRM records, neither knew the other existed, and updates flowed one way on inconsistent schedules. The requirement: real-time, bidirectional sync — a change in either system reflected in the other immediately.</p>
         <p><strong>The design.</strong> An event-driven integration hub sits between the two. Salesforce publishes changes via Change Data Capture over the Pub/Sub API; the internal platform publishes through an outbox pattern into Kafka. A canonical data model translates both directions, while echo suppression stops updates from ping-ponging, idempotency keys make retries safe, and last-writer-wins with field-level rules resolves genuine conflicts. Where CDC doesn't cover an object, a tiered fallback kicks in: Platform Events fired from Apex, then watermark-based polling as the floor.</p>
-        <div class="flow-diagram">
+        <div class="flow-diagram t-sync">
           <svg viewBox="0 0 760 190" aria-label="Architecture diagram: Salesforce and internal platform syncing through an event hub">
             <defs>
               <marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                 <path d="M0,0 L10,5 L0,10 z" fill="#62a8f5"/>
               </marker>
             </defs>
-            <!-- Salesforce box -->
             <rect x="18" y="48" width="180" height="94" rx="12" fill="rgba(157,140,255,.10)" stroke="#9d8cff" stroke-opacity=".55"/>
             <text x="108" y="82" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">Salesforce</text>
             <text x="108" y="103" text-anchor="middle" fill="#8d86b2" font-size="10.5">CDC · Pub/Sub API</text>
             <text x="108" y="120" text-anchor="middle" fill="#8d86b2" font-size="10.5">Platform Events fallback</text>
-            <!-- Hub box -->
             <rect x="290" y="34" width="180" height="122" rx="12" fill="rgba(98,168,245,.10)" stroke="#62a8f5" stroke-opacity=".6"/>
             <text x="380" y="66" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">Event hub</text>
             <text x="380" y="88" text-anchor="middle" fill="#8d86b2" font-size="10.5">Kafka · canonical model</text>
             <text x="380" y="105" text-anchor="middle" fill="#8d86b2" font-size="10.5">echo suppression</text>
             <text x="380" y="122" text-anchor="middle" fill="#8d86b2" font-size="10.5">idempotency · conflict rules</text>
             <text x="380" y="139" text-anchor="middle" fill="#8d86b2" font-size="10.5">DLQ + replay</text>
-            <!-- Internal box -->
             <rect x="562" y="48" width="180" height="94" rx="12" fill="rgba(95,212,178,.10)" stroke="#5fd4b2" stroke-opacity=".55"/>
             <text x="652" y="82" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">Internal platform</text>
             <text x="652" y="103" text-anchor="middle" fill="#8d86b2" font-size="10.5">outbox pattern</text>
             <text x="652" y="120" text-anchor="middle" fill="#8d86b2" font-size="10.5">service APIs</text>
-            <!-- arrows -->
             <line x1="204" y1="80" x2="284" y2="80" stroke="#62a8f5" stroke-width="1.6" marker-end="url(#arrB)"/>
             <line x1="284" y1="110" x2="204" y2="110" stroke="#62a8f5" stroke-width="1.6" marker-end="url(#arrB)"/>
             <line x1="476" y1="80" x2="556" y2="80" stroke="#62a8f5" stroke-width="1.6" marker-end="url(#arrB)"/>
@@ -401,8 +429,8 @@ footer .built{margin-top:44px;font-size:11px;color:var(--ink-faint);opacity:.7}
       <div class="meta">
         <div class="mark" style="background:var(--c-code)"></div>
         <h4>Order Management</h4>
-        <div class="where">Bluewolf, an IBM Company — retail clothing brand</div>
-        <div class="when">2021 — 2024</div>
+        <div class="where">National retail clothing brand</div>
+        <div class="when">Consulting engagement</div>
         <div class="stack">
           <span>Salesforce OMS</span><span>Flow orchestration</span><span>Apex</span>
           <span>Commerce APIs</span><span>Payments</span>
@@ -412,6 +440,50 @@ footer .built{margin-top:44px;font-size:11px;color:var(--ink-faint);opacity:.7}
         <h3>From "where's my order?" to a fulfillment engine the brand could trust.</h3>
         <p><strong>The problem.</strong> A national clothing brand's order lifecycle was split across its ecommerce storefront, a warehouse system, and manual service workarounds. Split shipments, returns, and exchanges routinely broke, and service agents had no reliable view of an order's true state.</p>
         <p><strong>The build.</strong> I implemented Salesforce Order Management as the system of record for the post-purchase lifecycle: order ingestion from the storefront, fulfillment orchestration flows routing to the right warehouse, payment capture on shipment, and a full returns-and-exchanges process with automated refunds. Service agents got a single order timeline inside the console, so "where's my order?" became a ten-second answer instead of a three-system hunt.</p>
+        <div class="flow-diagram t-oms">
+          <svg viewBox="0 0 760 300" aria-label="Architecture diagram: storefront orders flowing through Salesforce Order Management to warehouses, payments, and the service console">
+            <defs>
+              <marker id="o-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#f0b35f"/>
+              </marker>
+            </defs>
+            <!-- payments -->
+            <rect x="300" y="10" width="160" height="46" rx="10" fill="rgba(143,163,200,.09)" stroke="#8fa3c8" stroke-opacity=".5"/>
+            <text x="380" y="30" text-anchor="middle" fill="#d6cfef" font-size="11" font-weight="500">Payment gateway</text>
+            <text x="380" y="45" text-anchor="middle" fill="#8d86b2" font-size="9">auth · capture on shipment · refunds</text>
+            <!-- storefront -->
+            <rect x="18" y="104" width="172" height="90" rx="12" fill="rgba(95,212,178,.09)" stroke="#5fd4b2" stroke-opacity=".55"/>
+            <text x="104" y="139" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">Ecommerce</text>
+            <text x="104" y="157" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">storefront</text>
+            <text x="104" y="177" text-anchor="middle" fill="#8d86b2" font-size="9.5">orders · cancellations</text>
+            <!-- OMS -->
+            <rect x="282" y="88" width="196" height="122" rx="12" fill="rgba(240,179,95,.10)" stroke="#f0b35f" stroke-opacity=".6"/>
+            <text x="380" y="116" text-anchor="middle" fill="#ffffff" font-size="13.5" font-weight="600">Salesforce OMS</text>
+            <text x="380" y="139" text-anchor="middle" fill="#d6cfef" font-size="9.8">capture → allocate → fulfill → invoice</text>
+            <text x="380" y="157" text-anchor="middle" fill="#8d86b2" font-size="9.5">orchestration flows · split shipments</text>
+            <text x="380" y="173" text-anchor="middle" fill="#8d86b2" font-size="9.5">returns &amp; exchanges · auto refunds</text>
+            <text x="380" y="189" text-anchor="middle" fill="#8d86b2" font-size="9.5">peak-volume tested</text>
+            <!-- warehouse -->
+            <rect x="570" y="104" width="172" height="90" rx="12" fill="rgba(143,163,200,.09)" stroke="#8fa3c8" stroke-opacity=".5"/>
+            <text x="656" y="139" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">Warehouse / 3PL</text>
+            <text x="656" y="161" text-anchor="middle" fill="#8d86b2" font-size="9.5">fulfillment requests</text>
+            <text x="656" y="177" text-anchor="middle" fill="#8d86b2" font-size="9.5">shipments · return receipts</text>
+            <!-- console -->
+            <rect x="282" y="244" width="196" height="48" rx="10" fill="rgba(157,140,255,.08)" stroke="#9d8cff" stroke-opacity=".5"/>
+            <text x="380" y="264" text-anchor="middle" fill="#d6cfef" font-size="11" font-weight="500">Service console</text>
+            <text x="380" y="280" text-anchor="middle" fill="#8d86b2" font-size="9">one order timeline per customer</text>
+            <!-- edges -->
+            <line x1="194" y1="132" x2="276" y2="132" stroke="#f0b35f" stroke-width="1.6" marker-end="url(#o-arr)"/>
+            <text x="235" y="124" text-anchor="middle" fill="#5a537e" font-size="9.5" font-style="italic">orders</text>
+            <line x1="276" y1="166" x2="194" y2="166" stroke="#f0b35f" stroke-width="1.3" marker-end="url(#o-arr)"/>
+            <text x="235" y="182" text-anchor="middle" fill="#5a537e" font-size="9.5" font-style="italic">status</text>
+            <line x1="482" y1="132" x2="564" y2="132" stroke="#f0b35f" stroke-width="1.6" marker-end="url(#o-arr)"/>
+            <line x1="564" y1="166" x2="482" y2="166" stroke="#f0b35f" stroke-width="1.3" marker-end="url(#o-arr)"/>
+            <line x1="380" y1="60" x2="380" y2="84" stroke="#f0b35f" stroke-width="1.4" marker-end="url(#o-arr)" marker-start="url(#o-arr)"/>
+            <line x1="380" y1="214" x2="380" y2="240" stroke="#f0b35f" stroke-width="1.4" marker-end="url(#o-arr)"/>
+          </svg>
+          <div class="flow-caption">One lifecycle engine between storefront and warehouse — and one timeline for the agents answering the phone.</div>
+        </div>
         <div class="outcomes">
           <div><b>1 timeline</b><span>single source of truth for every order's lifecycle in the service console</span></div>
           <div><b>Automated</b><span>returns, exchanges, and refund flows that previously required manual intervention</span></div>
@@ -423,10 +495,10 @@ footer .built{margin-top:44px;font-size:11px;color:var(--ink-faint);opacity:.7}
     <!-- Project 4 -->
     <article class="project">
       <div class="meta">
-        <div class="mark" style="background:var(--c-care)"></div>
+        <div class="mark" style="background:var(--c-exp)"></div>
         <h4>Financial Services Cloud</h4>
-        <div class="where">Bluewolf, an IBM Company</div>
-        <div class="when">2021 — 2024</div>
+        <div class="where">Financial services firm</div>
+        <div class="when">Consulting engagement</div>
         <div class="stack">
           <span>FSC</span><span>Experience Cloud</span><span>Marketing Cloud</span>
           <span>Apex</span><span>LWC</span>
@@ -436,6 +508,64 @@ footer .built{margin-top:44px;font-size:11px;color:var(--ink-faint);opacity:.7}
         <h3>Giving advisors the household view their spreadsheets never could.</h3>
         <p><strong>The problem.</strong> Advisors at a financial services firm tracked client relationships in disconnected tools — one client's accounts here, their spouse's there, the family trust nowhere. Cross-sell opportunities and life-event triggers slipped through the gaps.</p>
         <p><strong>The build.</strong> I delivered a Financial Services Cloud rollout centered on householding: relationship groups tying individuals, joint accounts, trusts, and businesses into one financial picture, with financial accounts and rollups surfaced on every profile. Action plans standardized onboarding and review workflows, Marketing Cloud journeys fired on life events, and an Experience Cloud portal gave clients self-service access to their own picture — securely scoped to exactly what they should see.</p>
+        <div class="flow-diagram t-fsc">
+          <svg viewBox="0 0 760 270" aria-label="Architecture diagram: household members and financial accounts rolling up to one relationship group that powers the advisor console, client portal, and marketing journeys">
+            <defs>
+              <marker id="f-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#f27bb4"/>
+              </marker>
+            </defs>
+            <!-- members -->
+            <g fill="rgba(143,163,200,.09)" stroke="#8fa3c8" stroke-opacity=".5">
+              <rect x="18" y="20" width="148" height="40" rx="9"/>
+              <rect x="18" y="76" width="148" height="40" rx="9"/>
+              <rect x="18" y="132" width="148" height="40" rx="9"/>
+              <rect x="18" y="188" width="148" height="40" rx="9"/>
+            </g>
+            <g text-anchor="middle" fill="#d6cfef" font-size="11" font-weight="500">
+              <text x="92" y="38">Individual client</text><text x="92" y="94">Spouse / partner</text>
+              <text x="92" y="150">Family trust</text><text x="92" y="206">Business entity</text>
+            </g>
+            <g text-anchor="middle" fill="#8d86b2" font-size="9">
+              <text x="92" y="52">person account</text><text x="92" y="108">joint accounts</text>
+              <text x="92" y="164">beneficiaries</text><text x="92" y="220">ownership ties</text>
+            </g>
+            <!-- household -->
+            <rect x="268" y="62" width="212" height="128" rx="12" fill="rgba(242,123,180,.10)" stroke="#f27bb4" stroke-opacity=".6"/>
+            <text x="374" y="94" text-anchor="middle" fill="#ffffff" font-size="13.5" font-weight="600">Household</text>
+            <text x="374" y="114" text-anchor="middle" fill="#d6cfef" font-size="9.8">relationship group</text>
+            <text x="374" y="136" text-anchor="middle" fill="#8d86b2" font-size="9.5">financial accounts + rollups</text>
+            <text x="374" y="152" text-anchor="middle" fill="#8d86b2" font-size="9.5">AUM · goals · life events</text>
+            <text x="374" y="168" text-anchor="middle" fill="#8d86b2" font-size="9.5">one financial picture</text>
+            <!-- right stack -->
+            <g fill="rgba(242,123,180,.07)" stroke="#f27bb4" stroke-opacity=".45">
+              <rect x="568" y="20" width="176" height="62" rx="10"/>
+              <rect x="568" y="100" width="176" height="62" rx="10"/>
+              <rect x="568" y="180" width="176" height="62" rx="10"/>
+            </g>
+            <g text-anchor="middle" fill="#d6cfef" font-size="11" font-weight="500">
+              <text x="656" y="44">Advisor console</text>
+              <text x="656" y="124">Client portal</text>
+              <text x="656" y="204">Marketing journeys</text>
+            </g>
+            <g text-anchor="middle" fill="#8d86b2" font-size="9">
+              <text x="656" y="60">action plans · reviews</text><text x="656" y="72">cross-sell signals</text>
+              <text x="656" y="140">Experience Cloud</text><text x="656" y="152">scoped sharing model</text>
+              <text x="656" y="220">life-event triggers</text><text x="656" y="232">consent-aware sends</text>
+            </g>
+            <!-- edges -->
+            <g stroke="#f27bb4" stroke-width="1.3">
+              <path d="M166,40 C215,40 218,92 264,92" fill="none" marker-end="url(#f-arr)"/>
+              <path d="M166,96 C210,96 216,116 264,116" fill="none" marker-end="url(#f-arr)"/>
+              <path d="M166,152 C210,152 216,138 264,138" fill="none" marker-end="url(#f-arr)"/>
+              <path d="M166,208 C215,208 218,162 264,162" fill="none" marker-end="url(#f-arr)"/>
+              <path d="M480,96 C520,96 522,51 564,51" fill="none" marker-end="url(#f-arr)"/>
+              <path d="M480,126 C520,126 522,131 564,131" fill="none" marker-end="url(#f-arr)"/>
+              <path d="M480,156 C520,156 522,211 564,211" fill="none" marker-end="url(#f-arr)"/>
+            </g>
+          </svg>
+          <div class="flow-caption">Every relationship rolls up to the household — and the household powers the console, the portal, and the journeys.</div>
+        </div>
         <div class="outcomes">
           <div><b>Household-level</b><span>rollups replacing per-person views scattered across tools</span></div>
           <div><b>Standardized</b><span>onboarding and annual-review checklists via FSC action plans</span></div>
@@ -446,40 +576,14 @@ footer .built{margin-top:44px;font-size:11px;color:var(--ink-faint);opacity:.7}
   </div>
 </section>
 
-<!-- ============ EXPERIENCE ============ -->
-<section class="shell" id="experience">
-  <div class="kicker">Where I've been</div>
-  <h2 class="sec">Six-plus years, consultancy to product.</h2>
-  <p class="sec-sub">Started in consulting where every quarter meant a new industry and a new org — then moved in-house to go deep on healthcare.</p>
-  <div class="timeline">
-    <div class="stop" style="--dot:var(--c-patient)">
-      <div class="years">2019 — 2021</div>
-      <h4>Slalom</h4>
-      <div class="role">Salesforce Developer</div>
-      <p>Sales Cloud, Service Cloud, and Experience Cloud implementations across multiple clients — where I learned to ship declarative-first and reach for Apex when it earns its keep.</p>
-    </div>
-    <div class="stop" style="--dot:var(--c-service)">
-      <div class="years">2021 — 2024</div>
-      <h4>Bluewolf, an IBM Company</h4>
-      <div class="role">Salesforce Developer</div>
-      <p>Financial Services Cloud, Marketing Cloud, Experience Cloud, and Salesforce Order Management — enterprise-scale delivery with integration-heavy architectures.</p>
-    </div>
-    <div class="stop" style="--dot:var(--c-integ)">
-      <div class="years">2024 — present</div>
-      <h4>Mimit Health</h4>
-      <div class="role">Salesforce Developer</div>
-      <p>Health Cloud, Data Cloud, and Agentforce — building the patient-360 platform and AI-assisted service layer for a healthcare provider.</p>
-    </div>
-  </div>
-</section>
-
 <!-- ============ CERTS ============ -->
-<section class="shell" id="certs" style="padding-top:0">
+<section class="shell" id="certs">
   <div class="kicker">Credentials</div>
-  <h2 class="sec">Certified four ways.</h2>
-  <p class="sec-sub">Platform depth on both the declarative and programmatic sides.</p>
+  <h2 class="sec">Certified five ways.</h2>
+  <p class="sec-sub">Platform depth on the declarative, programmatic, and AI sides.</p>
   <div class="grid">
     <div class="cert" style="--ca:#9d8cff;--cb:#62a8f5"><i></i><h4>Platform Developer II</h4><span>Salesforce Certified</span></div>
+    <div class="cert" style="--ca:#c792ea;--cb:#f27bb4"><i></i><h4>Agentforce Specialist</h4><span>Salesforce Certified</span></div>
     <div class="cert" style="--ca:#62a8f5;--cb:#5fd4b2"><i></i><h4>Platform Developer I</h4><span>Salesforce Certified</span></div>
     <div class="cert" style="--ca:#f27bb4;--cb:#f0b35f"><i></i><h4>Platform App Builder</h4><span>Salesforce Certified</span></div>
     <div class="cert" style="--ca:#f0b35f;--cb:#9d8cff"><i></i><h4>Administrator</h4><span>Salesforce Certified</span></div>
@@ -500,143 +604,61 @@ footer .built{margin-top:44px;font-size:11px;color:var(--ink-faint);opacity:.7}
 
 <script>
 /* ================================================================
-   EDIT ME — all map content lives in this data block.
-   Change labels, descriptions and talking points freely;
-   the layout recomputes automatically.
+   EDIT ME — hero architecture content.
+   Descriptions and talking points live here; geometry below.
    ================================================================ */
-const DOMAINS = [
-  {
-    id:"patient", label:"Patient 360", color:"#9d8cff",
-    desc:"The clinical heart of the org: one unified record per patient, and everything that hangs off it.",
-    talk:"I treat the person account as the org's center of gravity — every domain either enriches it or reads from it.",
-    nodes:[
-      {id:"person", label:"Person Account", type:"Standard object",
-        desc:"The patient record itself — demographics, identifiers, and clinical context unified on one account.",
-        talk:"Enabled person accounts with duplicate matching rules tuned for patient data (name + DOB + identifier), so every downstream object keys off exactly one record."},
-      {id:"careplan", label:"Care Plan", type:"Health Cloud object",
-        desc:"Goals, problems, and interventions for a patient's ongoing care, tracked as structured data.",
-        talk:"Care plans are generated by a flow from intake assessment results, so coordinators start from a populated plan instead of a blank page."},
-      {id:"encounter", label:"Clinical Encounter", type:"Health Cloud object",
-        desc:"Visit and admission records synced in from the EHR so the CRM reflects real clinical activity.",
-        talk:"Mapped FHIR Encounter resources into Health Cloud's clinical model — the tricky part is code-set translation, not the API call."},
-      {id:"coverage", label:"Coverage & Claims", type:"Health Cloud object",
-        desc:"Insurance plans, member coverage, and claim status visible next to the patient record.",
-        talk:"Coverage verification runs as an async callout on intake, writing results back so agents never quote from stale eligibility."},
-      {id:"consent", label:"Consent Records", type:"Custom + standard",
-        desc:"Authorization forms and communication preferences, tracked per channel and per purpose.",
-        talk:"Consent gates every outbound automation — journeys and the Agentforce agent both check it before touching a patient."}
-    ]
-  },
-  {
-    id:"care", label:"Care Management", color:"#f27bb4",
-    desc:"The workflows that move a patient through their care journey — teams, assessments, referrals, and tasks.",
-    talk:"This is where declarative tools shine: coordinators change these processes quarterly, so I build them to be admin-editable.",
-    nodes:[
-      {id:"careteam", label:"Care Team", type:"Health Cloud object",
-        desc:"The providers, coordinators, and caregivers attached to a patient, with defined roles.",
-        talk:"Care team membership drives record visibility — sharing is calculated from team role, not org hierarchy."},
-      {id:"assessments", label:"Assessment Flows", type:"Screen Flow",
-        desc:"Guided screeners and intake questionnaires that write structured results to the patient record.",
-        talk:"Built as reusable subflows with a scoring engine in an invocable Apex action — new assessments ship without code changes."},
-      {id:"referrals", label:"Referral Management", type:"Process",
-        desc:"Inbound and outbound referrals routed to the right team with status tracked to completion.",
-        talk:"Referrals age against an SLA; a scheduled flow escalates anything stalled so nothing dies in a queue."},
-      {id:"milestones", label:"Tasks & Milestones", type:"Automation",
-        desc:"Care plan tasks generated, assigned, and tracked against target dates.",
-        talk:"Task templates live in custom metadata so care managers can retune protocols without a deployment."}
-    ]
-  },
-  {
-    id:"service", label:"Service & Agentforce", color:"#62a8f5",
-    desc:"How patients actually reach the org — cases, calls, and an AI agent for the routine work.",
-    talk:"The design rule: the agent handles what's routine and verifiable; humans get everything with judgment in it.",
-    nodes:[
-      {id:"case", label:"Case Management", type:"Standard object",
-        desc:"Patient inquiries and issues captured, categorized, and routed through Omni-Channel.",
-        talk:"Routing weighs case type, patient risk tier, and agent skill — configured in Omni-Channel flows, not code."},
-      {id:"agent", label:"Agentforce Agent", type:"AI agent",
-        desc:"A service agent that answers routine patient questions grounded in the actual record and knowledge base.",
-        talk:"The agent only acts through invocable Apex actions with the same permission checks a user faces — grounding plus guardrails, or it doesn't ship."},
-      {id:"knowledge", label:"Knowledge Base", type:"Knowledge",
-        desc:"Curated articles powering both human agents and the AI agent's answers.",
-        talk:"Article lifecycle has an owner and a review cadence — an ungoverned knowledge base makes an AI agent confidently wrong."},
-      {id:"cti", label:"Contact Center", type:"Integration",
-        desc:"Telephony integrated into the console with screen-pop on the caller's patient record.",
-        talk:"Screen-pop matches on verified phone plus identity check, popping the person account with the active care plan front and center."}
-    ]
-  },
-  {
-    id:"integ", label:"Integrations", color:"#5fd4b2",
-    desc:"The org's borders: where data enters, leaves, and gets reconciled with the outside world.",
-    talk:"Integration is where orgs quietly fail. I design for retries, ordering, and idempotency before the happy path.",
-    nodes:[
-      {id:"datacloud", label:"Data Cloud", type:"Platform",
-        desc:"Identity resolution and unified profiles across EHR, billing, and engagement sources.",
-        talk:"Match rules are deterministic-first (identifiers), fuzzy second — in healthcare a false merge is worse than a missed one."},
-      {id:"fhir", label:"FHIR / HL7 Gateway", type:"Integration",
-        desc:"The interoperability layer translating EHR clinical data into Salesforce's data model.",
-        talk:"An intermediate canonical layer absorbs EHR quirks so Salesforce mappings stay stable when the source changes."},
-      {id:"cdc", label:"CDC & Pub/Sub API", type:"Event streaming",
-        desc:"Change Data Capture publishing record changes as events for downstream consumers.",
-        talk:"CDC where supported, Platform Events from Apex where it isn't, watermark polling as the floor — a tiered fallback, not a single bet."},
-      {id:"middleware", label:"Middleware", type:"Orchestration",
-        desc:"The hub handling transformation, retries, dead-letter queues, and replay between systems.",
-        talk:"Every flow gets a DLQ and a replay path on day one — the question is never if a message fails, it's what happens next."},
-      {id:"payments", label:"Payment Gateway", type:"Integration",
-        desc:"PCI-scoped payment capture kept outside the org, with only tokens stored in Salesforce.",
-        talk:"Card data never touches the org — tokenize at the edge, keep Salesforce out of PCI scope entirely."}
-    ]
-  },
-  {
-    id:"code", label:"Automation & Code", color:"#f0b35f",
-    desc:"The programmatic backbone: Apex architecture, LWCs, and the flows that do the daily work.",
-    talk:"Declarative-first, code where it earns its keep — and when it's code, it's layered, tested, and bulkified.",
-    nodes:[
-      {id:"apexsvc", label:"Apex Service Layer", type:"Apex",
-        desc:"Domain and service classes separating business logic from triggers and UI.",
-        talk:"Service classes own the logic; triggers and flows are thin callers. That's what makes the org testable at 90%+ coverage."},
-      {id:"triggerfw", label:"Trigger Framework", type:"Apex",
-        desc:"One trigger per object delegating to ordered handler classes with recursion control.",
-        talk:"A boring, consistent trigger framework is the cheapest insurance an org can buy — I install one in week one."},
-      {id:"lwc", label:"LWC Library", type:"Lightning Web Components",
-        desc:"Reusable components — patient timeline, scheduling widgets, guided consoles.",
-        talk:"Components take data through public properties and wire adapters, never hardcoded queries — reuse is the whole point."},
-      {id:"flows", label:"Record-Triggered Flows", type:"Flow",
-        desc:"Declarative automation handling the org's day-to-day record logic.",
-        talk:"One before-save and one after-save flow per object, subflows for branches — flow sprawl is a real org-killer."},
-      {id:"invocable", label:"Invocable Actions", type:"Apex",
-        desc:"Apex capabilities exposed to Flow and Agentforce as safe, documented actions.",
-        talk:"Invocables are the org's internal API — the same action serves a flow today and the AI agent tomorrow."}
-    ]
-  },
-  {
-    id:"devops", label:"DevOps & Security", color:"#8fa3c8",
-    desc:"How changes ship safely and how patient data stays protected.",
-    talk:"In healthcare, security architecture is a feature, not a checkbox — it shapes the data model itself.",
-    nodes:[
-      {id:"cicd", label:"CI/CD Pipeline", type:"DevOps",
-        desc:"Source-driven development with automated validation and deployment on every merge.",
-        talk:"sf CLI plus GitHub Actions: PR validation against a scratch org, delta deploys, and no change-set archaeology."},
-      {id:"testfactory", label:"Test Data Factory", type:"Apex",
-        desc:"Builder-pattern factories generating realistic, related test data for every object.",
-        talk:"A shared factory keeps tests meaningful — coverage is a floor, assertion quality is the goal."},
-      {id:"perms", label:"Permission Model", type:"Security",
-        desc:"Permission set groups implementing least-privilege access by persona.",
-        talk:"Personas map to permission set groups; profiles stay nearly empty. Auditable, and PHI access is provable."},
-      {id:"shield", label:"Shield & Compliance", type:"Security",
-        desc:"Platform encryption, event monitoring, and field audit trail for HIPAA obligations.",
-        talk:"Encryption decisions happen at design time — encrypted fields change what you can filter and search, so it's architecture, not an afterthought."}
-    ]
-  }
-];
+const NODES = {
+  ehr:{label:"EHR System",layer:"Source system",type:"FHIR R4 · HL7 v2",
+    desc:"The clinical system of record. Encounters, conditions, and observations flow into Salesforce so the CRM reflects real clinical activity.",
+    talk:"Mapped FHIR resources into Health Cloud's clinical model — the tricky part is code-set translation, not the API call."},
+  lab:{label:"Lab Partner",layer:"Source system",type:"Results feed",
+    desc:"Lab results delivered as a feed, matched to the right patient and surfaced on the clinical timeline.",
+    talk:"Result matching is identifier-first with human review for ambiguous hits — a mismatched lab result is a patient-safety issue, not a data bug."},
+  pharmacy:{label:"Pharmacy & Fulfillment",layer:"Source system",type:"Orders · status",
+    desc:"Prescription orders and fulfillment status, so coordinators see whether a patient actually picked up their medication.",
+    talk:"Fulfillment status drives care-plan tasks — a missed pickup triggers outreach automatically instead of waiting for the next visit."},
+  sms:{label:"Telephony / SMS",layer:"Source system",type:"CTI · messaging",
+    desc:"Calls and text messages integrated into the console, with screen-pop on the caller's patient record.",
+    talk:"Screen-pop matches on verified phone plus identity check, popping the person account with the active care plan front and center."},
+  payments:{label:"Payment Gateway",layer:"Source system",type:"PCI-scoped",
+    desc:"Patient billing and payment capture kept outside the org, with only tokens stored in Salesforce.",
+    talk:"Card data never touches the org — tokenize at the edge, keep Salesforce out of PCI scope entirely."},
+  dwh:{label:"Data Warehouse",layer:"Source system",type:"Analytics sync",
+    desc:"The enterprise warehouse exchanging curated datasets with the platform for analytics and enrichment.",
+    talk:"Salesforce isn't the analytics engine — sync the curated outputs both ways and let each system do what it's for."},
+  integration:{label:"Integration Layer",layer:"Integration",type:"API-led",
+    desc:"The hub every system talks through: API-led orchestration, canonical mapping, FHIR translation, retries, dead-letter queues, and replay.",
+    talk:"An intermediate canonical layer absorbs source-system quirks so Salesforce mappings stay stable — and every flow gets a DLQ and replay path on day one."},
+  eventbus:{label:"Event Bus",layer:"Integration",type:"Streaming",
+    desc:"Change Data Capture published over the Pub/Sub API, with Platform Events alongside, streaming record changes to downstream consumers.",
+    talk:"CDC where supported, Platform Events from Apex where it isn't, watermark polling as the floor — a tiered fallback, not a single bet."},
+  platform:{label:"Salesforce Platform",layer:"Platform",type:"Shield-encrypted",
+    desc:"The platform itself — clouds, code, and AI agents on one shared data model, encrypted at rest with Shield.",
+    talk:"Every component here is a conversation I'm happy to go deep on. Pick one."},
+  health:{label:"Health Cloud",layer:"Salesforce cloud",type:"Patient 360",
+    desc:"Person accounts as the single patient record — care plans, clinical encounters, coverage, and consent hanging off one unified profile.",
+    talk:"Person accounts with duplicate matching tuned for patient data (name + DOB + identifier), so every downstream object keys off exactly one record."},
+  servicecloud:{label:"Service Cloud",layer:"Salesforce cloud",type:"Cases · Omni",
+    desc:"Patient inquiries captured, categorized, and routed through Omni-Channel to the coordinator console.",
+    talk:"Routing weighs case type, patient risk tier, and agent skill — configured in Omni-Channel flows, not code."},
+  experience:{label:"Experience Cloud",layer:"Salesforce cloud",type:"Patient portal",
+    desc:"The patient-facing portal: intake forms, appointment views, and consent capture, scoped to exactly what each patient should see.",
+    talk:"Guest and authenticated access get separate threat models — the sharing architecture is designed before the first page, not after."},
+  agentforce:{label:"Agentforce",layer:"AI agents",type:"Grounded agents",
+    desc:"A patient service agent and a coordinator assist agent, grounded in the actual record and a curated knowledge base, with clean escalation to humans.",
+    talk:"The agent only acts through invocable Apex actions with the same permission checks a user faces — grounding plus guardrails, or it doesn't ship."},
+  codebar:{label:"Apex · LWC · Flow",layer:"Code & automation",type:"Framework",
+    desc:"The programmatic backbone: a one-trigger-per-object framework delegating to a service layer, reusable LWCs, and declarative-first flows.",
+    talk:"Service classes own the logic; triggers and flows are thin callers — and invocables are the org's internal API, serving a flow today and the AI agent tomorrow."},
+  security:{label:"Shield & Access",layer:"Security",type:"HIPAA",
+    desc:"Platform encryption, event monitoring, and a least-privilege permission model built around protected health information.",
+    talk:"Encryption decisions happen at design time — encrypted fields change what you can filter and search, so it's architecture, not an afterthought."},
+  datacloud:{label:"Data Cloud",layer:"Data",type:"Unified profile",
+    desc:"Ingestion, identity resolution, and the unified patient profile — plus calculated insights and the grounding layer for Agentforce.",
+    talk:"Match rules are deterministic-first (identifiers), fuzzy second — in healthcare a false merge is worse than a missed one."}
+};
 
-const CROSSLINKS = [
-  ["person","careplan"],["person","datacloud"],["encounter","fhir"],
-  ["agent","knowledge"],["agent","invocable"],["cti","case"],
-  ["apexsvc","triggerfw"],["cdc","middleware"],["cicd","testfactory"],
-  ["consent","shield"],["assessments","careplan"],["datacloud","agent"],
-  ["coverage","middleware"],["milestones","flows"]
-];
+const EXTRA_NEIGHBORS = [["agentforce","datacloud"],["agentforce","codebar"],["health","datacloud"]];
 
 /* ================================================================ */
 
@@ -657,126 +679,192 @@ const CROSSLINKS = [
   }
 
   /* legend */
+  const LEGEND=[["Source systems","#8fa3c8"],["Integration & events","#5fd4b2"],
+    ["Salesforce clouds","#9d8cff"],["Code & security","#f0b35f"],["Data Cloud","#f0935f"]];
   const legend=document.getElementById("legend");
-  DOMAINS.forEach(d=>{
+  LEGEND.forEach(([t,c])=>{
     const row=document.createElement("div");
-    row.innerHTML=`<i style="background:${d.color}"></i>${d.label}`;
+    row.innerHTML=`<i style="background:${c}"></i>${t}`;
     legend.appendChild(row);
   });
 
-  /* layout */
+  /* ---- geometry (design space 1440 x 820) ---- */
+  const VB_W=1440, VB_H=820;
   const zoomLayer = svg.append("g");
-  const cx = W()/2 + (isMobile()?0:60), cy = H()/2 - 20;
-  const hubR = isMobile()? Math.min(W(),H())*0.30 : Math.min(W(),H())*0.30;
-  const leafR = isMobile()? 92 : 128;
-  const nodeIndex = {};
+  const edgesG = zoomLayer.append("g");
+  const boxesG = zoomLayer.append("g");
 
-  DOMAINS.forEach((dom,i)=>{
-    const a = (i / DOMAINS.length) * Math.PI*2 - Math.PI/2;
-    dom.x = cx + Math.cos(a)*hubR;
-    dom.y = cy + Math.sin(a)*hubR;
-    dom.angle = a;
-    dom.isHub = true;
-    nodeIndex[dom.id]=dom;
-    const spread = Math.PI/2.6;
-    dom.nodes.forEach((n,j)=>{
-      const t = dom.nodes.length===1 ? 0 : (j/(dom.nodes.length-1) - 0.5);
-      const la = a + t*spread;
-      n.x = dom.x + Math.cos(la)*leafR;
-      n.y = dom.y + Math.sin(la)*leafR;
-      n.domain = dom;
-      nodeIndex[n.id]=n;
+  const EXT = [
+    {id:"ehr",   t:"EHR System",        s:"FHIR R4 · HL7 v2"},
+    {id:"lab",   t:"Lab Partner",       s:"results feed"},
+    {id:"pharmacy",t:"Pharmacy",        s:"orders · fulfillment"},
+    {id:"sms",   t:"Telephony / SMS",   s:"CTI · messaging"},
+    {id:"payments",t:"Payment Gateway", s:"tokenized · PCI-scoped"},
+    {id:"dwh",   t:"Data Warehouse",    s:"analytics sync"}
+  ];
+  const EXT_X=40, EXT_W=190, EXT_H=66, EXT_GAP=120, EXT_Y0=50;
+
+  function addBox(id,x,y,w,h,color,fillA,title,subs,opts={}){
+    const g=boxesG.append("g").attr("class","archnode").attr("data-id",id);
+    g.append("rect").attr("class","body")
+      .attr("x",x).attr("y",y).attr("width",w).attr("height",h).attr("rx",opts.rx??11)
+      .attr("fill",`rgba(${fillA})`).attr("stroke",color)
+      .attr("stroke-opacity",opts.so??.55).attr("stroke-width",opts.sw??1.4);
+    const cx=x+w/2;
+    let ty=y+(opts.titleY??28);
+    g.append("text").attr("x",cx).attr("y",ty).attr("text-anchor","middle")
+      .attr("fill","#fff").attr("font-size",opts.ts??14).attr("font-weight",600).text(title);
+    (subs||[]).forEach((s,i)=>{
+      g.append("text").attr("x",cx).attr("y",ty+(opts.firstGap??22)+i*(opts.lineGap??17))
+        .attr("text-anchor","middle").attr("fill","#8d86b2")
+        .attr("font-size",opts.ss??10.5).attr("font-weight",300).text(s);
     });
-  });
-
-  /* connection lookup for highlighting + panel */
-  const neighbors = {};
-  const addN=(a,b)=>{(neighbors[a]=neighbors[a]||new Set()).add(b);(neighbors[b]=neighbors[b]||new Set()).add(a);};
-  DOMAINS.forEach(d=>d.nodes.forEach(n=>addN(d.id,n.id)));
-  CROSSLINKS.forEach(([a,b])=>addN(a,b));
-
-  const curve=(x1,y1,x2,y2,bend=0.18)=>{
-    const mx=(x1+x2)/2, my=(y1+y2)/2;
-    const qx=mx+(cx-mx)*bend, qy=my+(cy-my)*bend;
-    return `M${x1},${y1} Q${qx},${qy} ${x2},${y2}`;
-  };
-
-  /* spokes: center → hub, hub → leaf */
-  const spokes = zoomLayer.append("g");
-  DOMAINS.forEach(d=>{
-    spokes.append("path").attr("class","spoke lk")
-      .attr("d",curve(cx,cy,d.x,d.y,0))
-      .attr("stroke",d.color).attr("stroke-width",1.4)
-      .attr("data-ids",`core ${d.id}`);
-    d.nodes.forEach(n=>{
-      spokes.append("path").attr("class","spoke lk")
-        .attr("d",curve(d.x,d.y,n.x,n.y,0))
-        .attr("stroke",d.color).attr("stroke-width",1)
-        .attr("data-ids",`${d.id} ${n.id}`);
-    });
-  });
-  CROSSLINKS.forEach(([a,b])=>{
-    const A=nodeIndex[a],B=nodeIndex[b];
-    if(!A||!B)return;
-    spokes.append("path").attr("class","crosslink lk")
-      .attr("d",curve(A.x,A.y,B.x,B.y,0.35))
-      .attr("data-ids",`${a} ${b}`);
-  });
-
-  /* center node */
-  const gCore = zoomLayer.append("g").attr("class","node hub").attr("data-id","core")
-    .attr("transform",`translate(${cx},${cy})`);
-  gCore.append("circle").attr("class","halo").attr("r",34).attr("fill","#9d8cff");
-  gCore.append("circle").attr("class","core").attr("r",16).attr("fill","#171136")
-    .attr("stroke","#d6cfef").attr("stroke-width",1.6);
-  gCore.append("circle").attr("r",5).attr("fill","#d6cfef");
-  gCore.append("text").attr("y",-28).attr("text-anchor","middle")
-    .attr("font-size",13).attr("font-weight",600).attr("fill","#fff").text("Salesforce Org");
-  nodeIndex["core"]={id:"core",label:"Salesforce Org",isCore:true,
-    desc:"A representative Health Cloud org — the kind of platform I design and build end to end: data model, automation, code, integrations, and the DevOps that ships it safely.",
-    talk:"Every branch here is a conversation I'm happy to go deep on. Pick a node."};
-
-  /* hubs + leaves */
-  const allNodes=[];
-  DOMAINS.forEach(d=>{
-    allNodes.push(d);
-    d.nodes.forEach(n=>allNodes.push(n));
-  });
-
-  allNodes.forEach(n=>{
-    const hub = !!n.isHub;
-    const outer = zoomLayer.append("g")
-      .attr("class","node"+(hub?" hub":""))
-      .attr("data-id",n.id)
-      .attr("transform",`translate(${n.x},${n.y})`)
-      .style("--dx",(Math.random()*6-3).toFixed(1)+"px")
-      .style("--dy",(Math.random()*6-3).toFixed(1)+"px")
-      .style("--dur",(6+Math.random()*5).toFixed(1)+"s");
-    const g = outer.append("g").attr("class",reduced?"":"float");
-    const color = hub? n.color : n.domain.color;
-    g.append("circle").attr("class","halo").attr("r",hub?26:18).attr("fill",color);
-    g.append("circle").attr("class","core").attr("r",hub?9.5:5.5)
-      .attr("fill","#141031").attr("stroke",color).attr("stroke-width",hub?2:1.4);
-    if(hub) g.append("circle").attr("r",3.4).attr("fill",color);
-    const above = n.y < (hub? cy : n.domain.y);
-    g.append("text")
-      .attr("y", above? (hub?-16:-11) : (hub?26:19))
-      .attr("text-anchor","middle")
-      .attr("font-size",hub?12.5:10.5)
-      .attr("font-weight",hub?600:300)
-      .attr("fill",hub?"#fff":"var(--ink)")
-      .text(n.label);
-  });
-
-  /* zoom / pan */
-  const zoom = d3.zoom().scaleExtent([0.55,2.4])
-    .on("zoom",e=>zoomLayer.attr("transform",e.transform));
-  svg.call(zoom);
-  if(isMobile()){
-    svg.call(zoom.transform, d3.zoomIdentity.translate(W()*0.5,H()*0.42).scale(0.72).translate(-cx,-cy));
+    return g;
   }
 
-  /* selection + panel */
+  /* external systems */
+  EXT.forEach((e,i)=>{
+    const y=EXT_Y0+i*EXT_GAP;
+    addBox(e.id,EXT_X,y,EXT_W,EXT_H,"#8fa3c8","143,163,200,.08",e.t,[e.s],
+      {ts:12.5,ss:9.5,titleY:27,firstGap:19,rx:10});
+  });
+
+  /* integration + event bus */
+  addBox("integration",330,120,190,320,"#5fd4b2","95,212,178,.08","Integration Layer",
+    ["API-led orchestration","canonical mapping","FHIR translation","retries · DLQ · replay"],
+    {titleY:140,ts:13.5,firstGap:26,lineGap:19});
+  addBox("eventbus",330,480,190,112,"#5fd4b2","95,212,178,.08","Event Bus",
+    ["CDC · Pub/Sub API","Platform Events"],{ts:13,titleY:34,firstGap:23,lineGap:18});
+  edgesG.append("path").attr("d","M425,440 L425,480")
+    .attr("stroke","#5fd4b2").attr("stroke-width",1.4).attr("stroke-opacity",.6).attr("fill","none")
+    .attr("class","aedge").attr("data-ids","integration eventbus");
+
+  /* platform container */
+  const plat=addBox("platform",640,50,760,520,"#9d8cff","157,140,255,.05","Salesforce Platform",[],
+    {titleY:34,ts:14.5,so:.6,sw:1.6,rx:14});
+  plat.select("text").attr("x",640+30).attr("text-anchor","start");
+  plat.append("text").attr("x",640+760-30).attr("y",84).attr("text-anchor","end")
+    .attr("fill","#5a537e").attr("font-size",10.5).attr("font-style","italic").text("Shield-encrypted");
+
+  /* clouds inside platform */
+  const CLOUDS=[
+    {id:"health",x:670,y:100,c:"#9d8cff",t:"Health Cloud",
+      s:["patients · households · care plans","referrals · coverage · consent"]},
+    {id:"servicecloud",x:1035,y:100,c:"#62a8f5",t:"Service Cloud",
+      s:["cases · Omni-Channel routing","care coordinator console"]},
+    {id:"experience",x:670,y:280,c:"#f27bb4",t:"Experience Cloud",
+      s:["patient portal · intake forms","consent capture"]},
+    {id:"agentforce",x:1035,y:280,c:"#c792ea",t:"Agentforce",
+      s:["patient service agent","coordinator assist agent"]}
+  ];
+  CLOUDS.forEach(c=>addBox(c.id,c.x,c.y,335,150,c.c,"20,16,49,.55",c.t,c.s,
+    {titleY:56,ts:15,firstGap:26,lineGap:20,ss:11,so:.65}));
+
+  /* code bar + security */
+  addBox("codebar",670,470,455,72,"#f0b35f","240,179,95,.07","Apex · LWC · Flow",
+    ["trigger framework · service layer · invocable actions"],
+    {titleY:30,ts:12.5,firstGap:21,ss:10,rx:10});
+  addBox("security",1155,470,215,72,"#f0b35f","240,179,95,.07","Shield & Access",
+    ["encryption · perm set groups"],{titleY:30,ts:12.5,firstGap:21,ss:10,rx:10});
+
+  /* data cloud */
+  addBox("datacloud",640,635,760,135,"#f0935f","240,147,95,.07","Data Cloud",
+    ["ingestion · identity resolution · unified patient profile","calculated insights · segments · grounding for Agentforce"],
+    {titleY:40,ts:14.5,firstGap:28,lineGap:20,ss:11,so:.6,sw:1.6,rx:14});
+
+  /* ---- edges ---- */
+  const COLORS={ext:"#8fa3c8",integ:"#5fd4b2",plat:"#9d8cff",data:"#f0935f"};
+  ["ext","integ","plat","data"].forEach(k=>{
+    svg.append("defs").append("marker").attr("id","m-"+k)
+      .attr("viewBox","0 0 10 10").attr("refX",8).attr("refY",5)
+      .attr("markerWidth",6.5).attr("markerHeight",6.5).attr("orient","auto-start-reverse")
+      .append("path").attr("d","M0,0 L10,5 L0,10 z").attr("fill",COLORS[k]);
+  });
+
+  const hcurve=(x1,y1,x2,y2)=>{
+    const dx=(x2-x1)*0.45;
+    return `M${x1},${y1} C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}`;
+  };
+
+  let edgeN=0;
+  function addEdge(aId,bId,x1,y1,x2,y2,color,marker,{bi=true,label=null,width=1.4,straight=false}={}){
+    const id="edge"+(edgeN++);
+    const d=straight?`M${x1},${y1} L${x2},${y2}`:hcurve(x1,y1,x2,y2);
+    const g=edgesG.append("g").attr("class","aedge").attr("data-ids",aId+" "+bId);
+    const p=g.append("path").attr("id",id).attr("d",d)
+      .attr("stroke",color).attr("stroke-width",width).attr("stroke-opacity",.55)
+      .attr("marker-end",`url(#${marker})`);
+    if(bi)p.attr("marker-start",`url(#${marker})`);
+    if(label){
+      g.append("text").attr("x",(x1+x2)/2).attr("y",Math.min(y1,y2)-8)
+        .attr("text-anchor","middle").text(label);
+    }
+    if(!reduced){
+      const mk=(rev,delay)=>{
+        const c=g.append("circle").attr("r",3.2).attr("fill",color).attr("opacity",.9);
+        const am=document.createElementNS("http://www.w3.org/2000/svg","animateMotion");
+        am.setAttribute("dur",(3.5+Math.random()*2.5).toFixed(1)+"s");
+        am.setAttribute("repeatCount","indefinite");
+        am.setAttribute("begin",delay+"s");
+        if(rev){am.setAttribute("keyPoints","1;0");am.setAttribute("keyTimes","0;1");}
+        const mp=document.createElementNS("http://www.w3.org/2000/svg","mpath");
+        mp.setAttribute("href","#"+id);
+        am.appendChild(mp);
+        c.node().appendChild(am);
+      };
+      mk(false,(Math.random()*3).toFixed(1));
+      if(bi)mk(true,(Math.random()*3+1).toFixed(1));
+    }
+    return g;
+  }
+
+  /* externals → integration (fan) */
+  const fanY=[150,205,262,318,375,430];
+  EXT.forEach((e,i)=>{
+    const y=EXT_Y0+i*EXT_GAP+EXT_H/2;
+    addEdge(e.id,"integration",EXT_X+EXT_W,y,330,fanY[i],COLORS.ext,"m-ext",{bi:true,width:1.2});
+  });
+  /* integration ↔ platform */
+  addEdge("integration","platform",520,250,640,250,COLORS.plat,"m-plat",{bi:true,label:"REST",width:1.8});
+  /* eventbus ↔ platform */
+  addEdge("eventbus","platform",520,520,640,520,COLORS.integ,"m-integ",{bi:true,label:"CDC · Pub/Sub",width:1.5});
+  /* event bus → data cloud (ingest) */
+  addEdge("eventbus","datacloud",425,592,640,700,COLORS.data,"m-data",{bi:false,label:null,width:1.6});
+  edgesG.append("text").attr("x",520).attr("y",668).attr("text-anchor","middle")
+    .attr("fill","#5a537e").attr("font-size",10.5).attr("font-style","italic").text("ingest");
+  /* data cloud ↕ platform */
+  addEdge("datacloud","platform",1020,635,1020,570,COLORS.data,"m-data",{bi:true,straight:true,width:1.8});
+  edgesG.append("text").attr("x",1038).attr("y",610).attr("fill","#5a537e")
+    .attr("font-size",10.5).attr("font-style","italic").text("unified profile · grounding");
+
+  /* ---- neighbors for highlighting + panel ---- */
+  const neighbors={};
+  const addN=(a,b)=>{(neighbors[a]=neighbors[a]||new Set()).add(b);(neighbors[b]=neighbors[b]||new Set()).add(a);};
+  edgesG.selectAll(".aedge").each(function(){
+    const [a,b]=this.getAttribute("data-ids").split(" ");addN(a,b);
+  });
+  ["health","servicecloud","experience","agentforce","codebar","security"].forEach(id=>addN("platform",id));
+  EXTRA_NEIGHBORS.forEach(([a,b])=>addN(a,b));
+
+  /* ---- zoom / fit ---- */
+  const zoom=d3.zoom().scaleExtent([0.35,2.5])
+    .on("zoom",e=>zoomLayer.attr("transform",e.transform));
+  svg.call(zoom);
+  function fit(){
+    let k,tx,ty;
+    if(isMobile()){
+      k=Math.min((H()*0.72)/VB_H,0.9);
+      tx=W()/2-500*k; ty=H()*0.42-(VB_H/2)*k;
+    }else{
+      /* keep the diagram clear of the bottom-left intro block */
+      k=Math.min((W()-80)/VB_W,(H()-300)/VB_H,0.95);
+      tx=W()-VB_W*k-45; ty=58;
+    }
+    svg.call(zoom.transform,d3.zoomIdentity.translate(tx,ty).scale(k));
+  }
+  fit();
+
+  /* ---- selection + panel ---- */
   const panel=document.getElementById("panel");
   const chips=document.getElementById("chips");
   const pTitle=document.getElementById("pTitle");
@@ -784,37 +872,39 @@ const CROSSLINKS = [
   const pRel=document.getElementById("pRel");
   const pRelBlock=document.getElementById("pRelBlock");
   const pTalk=document.getElementById("pTalk");
+  const NODE_COLOR={ehr:"#8fa3c8",lab:"#8fa3c8",pharmacy:"#8fa3c8",sms:"#8fa3c8",
+    payments:"#8fa3c8",dwh:"#8fa3c8",integration:"#5fd4b2",eventbus:"#5fd4b2",
+    platform:"#9d8cff",health:"#9d8cff",servicecloud:"#62a8f5",experience:"#f27bb4",
+    agentforce:"#c792ea",codebar:"#f0b35f",security:"#f0b35f",datacloud:"#f0935f"};
 
   function clearSel(){
-    d3.selectAll(".node").classed("sel",false).classed("dimmed",false).classed("lit",false);
-    d3.selectAll(".lk").classed("dimmed",false).classed("lit",false);
+    d3.selectAll(".archnode").classed("sel",false).classed("dimmed",false).classed("lit",false);
+    d3.selectAll(".aedge").classed("dimmed",false).classed("lit",false);
     panel.classList.remove("open");
   }
 
   function select(id){
-    const n=nodeIndex[id]; if(!n) return;
-    const near = neighbors[id]||new Set();
-    d3.selectAll(".node").each(function(){
+    const n=NODES[id]; if(!n) return;
+    const near=neighbors[id]||new Set();
+    d3.selectAll(".archnode").each(function(){
       const nid=this.getAttribute("data-id");
-      const on = nid===id || near.has(nid);
-      d3.select(this).classed("sel",nid===id).classed("dimmed",!on).classed("lit",on);
+      const on=nid===id||near.has(nid)||(id!=="platform"&&nid==="platform"&&near.has("platform"));
+      d3.select(this).classed("sel",nid===id).classed("dimmed",!on&&nid!==id).classed("lit",on);
     });
-    d3.selectAll(".lk").each(function(){
+    d3.selectAll(".aedge").each(function(){
       const ids=this.getAttribute("data-ids").split(" ");
       const on=ids.includes(id);
       d3.select(this).classed("dimmed",!on).classed("lit",on);
     });
-
-    const color = n.isCore? "#9d8cff" : (n.isHub? n.color : n.domain.color);
+    const color=NODE_COLOR[id]||"#9d8cff";
     chips.innerHTML="";
-    const mk=t=>{const c=document.createElement("span");c.className="chip";
-      c.style.borderColor=color;c.style.color=color;c.textContent=t;chips.appendChild(c);};
-    if(n.isCore){mk("Org");}
-    else if(n.isHub){mk("Domain");}
-    else {mk(n.domain.label);mk(n.type);}
+    [n.layer,n.type].forEach(t=>{
+      const c=document.createElement("span");c.className="chip";
+      c.style.borderColor=color;c.style.color=color;c.textContent=t;chips.appendChild(c);
+    });
     pTitle.textContent=n.label;
     pDesc.textContent=n.desc;
-    const rel=[...near].map(x=>nodeIndex[x]?.label).filter(Boolean);
+    const rel=[...near].map(x=>NODES[x]?.label).filter(Boolean);
     if(rel.length){pRelBlock.style.display="";pRel.textContent=rel.join(", ");}
     else pRelBlock.style.display="none";
     pTalk.textContent=n.talk;
@@ -822,8 +912,8 @@ const CROSSLINKS = [
   }
 
   svg.on("click",e=>{
-    const g=e.target.closest(".node");
-    if(g){select(g.getAttribute("data-id"));}
+    const g=e.target.closest(".archnode");
+    if(g){e.stopPropagation();select(g.getAttribute("data-id"));}
     else clearSel();
   });
   document.getElementById("panelClose").addEventListener("click",clearSel);
